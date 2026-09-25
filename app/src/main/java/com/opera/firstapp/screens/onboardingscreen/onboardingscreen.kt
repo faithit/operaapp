@@ -1,6 +1,7 @@
 package com.opera.firstapp.screens.onboardingscreen
 
 
+import android.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -22,12 +23,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.models.onboardingItems
 import com.opera.firstapp.navigation.ROUTE_LOGIN
+import com.opera.firstapp.navigation.ROUTE_ONBOARDING
 import kotlinx.coroutines.launch
 
 @Composable
@@ -48,9 +52,37 @@ fun OnboardingScreen(navController: NavHostController){
     val scope= rememberCoroutineScope ()
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(color = Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        //show skip if not in the last page
+        if (pagerState.currentPage!=onboardingItems.lastIndex){
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = {
+                    navController.navigate(ROUTE_LOGIN){
+                        popUpTo(ROUTE_ONBOARDING){
+                            inclusive=true
+                        }
+                    }
+                }, modifier= Modifier
+                    .height(55.dp)
+                    .width(100.dp)
+                    ) {
+                    Text("skip", fontSize = 18.sp,color=Color(0xFF2E7D32), fontWeight = FontWeight.Bold)
+                }
+
+            }
+
+        }
+        else{
+            Spacer(modifier= Modifier.height(40.dp))
+        }
 
 //horizontal pages
         HorizontalPager(
@@ -69,7 +101,9 @@ fun OnboardingScreen(navController: NavHostController){
                 Image(
                     painter = painterResource(id = item.imageRes),
                     contentDescription = item.title,
-                    modifier = Modifier.size(200.dp)
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 //title

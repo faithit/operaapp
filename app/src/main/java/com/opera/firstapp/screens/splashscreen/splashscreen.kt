@@ -56,9 +56,7 @@ fun SplashScreen(navController: NavHostController){
             color= Color.Green,
             fontSize = 32.sp
         )
-
     }
-
 }
 @Preview(showBackground = true)
 @Composable
