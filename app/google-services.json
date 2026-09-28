@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "669628948121",
+    "project_id": "operaapp-b9699",
+    "storage_bucket": "operaapp-b9699.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669628948121:android:8ddad4125ea1c11536a208",
+        "android_client_info": {
+          "package_name": "com.opera.firstapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8T92-rV1JEIjTObv9KhDs2-kEdnNQmcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

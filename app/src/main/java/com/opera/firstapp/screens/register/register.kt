@@ -47,6 +47,7 @@ fun  RegisterScreen(navController: NavHostController){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Text("REGISTER",
             fontSize = 28.sp,
             color = Color.Magenta,
