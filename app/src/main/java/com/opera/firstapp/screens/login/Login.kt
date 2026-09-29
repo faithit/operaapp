@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.inspectable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -43,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.R
 import com.opera.firstapp.navigation.ROUTE_DASHBOARD
 import com.opera.firstapp.navigation.ROUTE_REGISTER
+import com.opera.firstapp.viewModel.AuthViewModel
 
 @Composable
 fun LoginScreen(navController: NavHostController){
@@ -108,10 +110,12 @@ fun LoginScreen(navController: NavHostController){
             }
         )
         Spacer(modifier= Modifier.height(20.dp))
+        val context= LocalContext.current
+        val myAuth= AuthViewModel(navController,context)
         Button(
             onClick = {
-//                TODO  LATER
-                navController.navigate(ROUTE_DASHBOARD)
+                myAuth.login(email,password)
+
             },
             modifier = Modifier.fillMaxWidth(),
             colors= ButtonDefaults.buttonColors(

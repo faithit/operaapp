@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.navigation.ROUTE_LOGIN
+import com.opera.firstapp.viewModel.AuthViewModel
 
 @Composable
 fun  RegisterScreen(navController: NavHostController){
@@ -125,9 +127,10 @@ fun  RegisterScreen(navController: NavHostController){
             visualTransformation = PasswordVisualTransformation(),
         )
         Spacer(modifier = Modifier.height(10.dp))
-
+        val context= LocalContext.current
+        val myAuth= AuthViewModel(navController,context)
     Button(
-       onClick={},
+       onClick={myAuth.signup(fullname,email, password, confirmpass)},
        modifier = Modifier.fillMaxWidth(),
        colors= ButtonDefaults.buttonColors(
            containerColor = Color.Magenta,

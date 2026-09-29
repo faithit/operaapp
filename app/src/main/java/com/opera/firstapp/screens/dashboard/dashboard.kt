@@ -34,22 +34,32 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.opera.firstapp.viewModel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavHostController){
+    val context= LocalContext.current
+    val myAuth= AuthViewModel(navController,context)
     Scaffold(
+
         //topbar
         topBar = {
             TopAppBar(
@@ -67,7 +77,7 @@ fun DashboardScreen(navController: NavHostController){
                         Icon(Icons.Default.Person,
                             contentDescription = "icon")
                     }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {myAuth.signout()}) {
                         Icon(Icons.Default.ExitToApp,
                             contentDescription = "icon")
                     }
@@ -130,7 +140,11 @@ fun DashboardScreen(navController: NavHostController){
             verticalArrangement = Arrangement.Center
 
         ) {
-            Text("welcome to my app",
+            var username  by remember { mutableStateOf("loading ..") }
+            LaunchedEffect(Unit) {
+                myAuth.getCurrentUserName { username=it }
+            }
+            Text("welcome $username !",
                 fontSize = 28.sp,
                 color=Color.Blue
             )
