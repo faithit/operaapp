@@ -9,6 +9,7 @@ import com.opera.firstapp.models.User
 import com.opera.firstapp.navigation.ROUTE_DASHBOARD
 import com.opera.firstapp.navigation.ROUTE_LOGIN
 import com.opera.firstapp.navigation.ROUTE_REGISTER
+import com.opera.firstapp.navigation.ROUTE_USERDASHBOARD
 
 
 class AuthViewModel (var navController: NavHostController, var context: Context){
@@ -28,7 +29,7 @@ class AuthViewModel (var navController: NavHostController, var context: Context)
             mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val userdata= User(fullname,email,password,mAuth.currentUser!!.uid)
+                        val userdata= User(fullname,email,password,mAuth.currentUser!!.uid,"user")
                         //save userdata in realtime database
                         val regRef= FirebaseDatabase.getInstance().
                         getReference().child("Users/" +mAuth.currentUser!!.uid)
@@ -57,8 +58,19 @@ class AuthViewModel (var navController: NavHostController, var context: Context)
     fun login(email: String,password: String){
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
             if (it.isSuccessful){
-                Toast.makeText(context,"Successfully  login in", Toast.LENGTH_LONG).show()
-                navController.navigate(ROUTE_DASHBOARD)
+                val userId=mAuth.currentUser?.uid
+                //fetch user role
+                FirebaseDatabase.getInstance().reference.child("Users")
+                    .child(userId!!).get().addOnSuccessListener { snapshot ->
+                        var role = snapshot.child("role").value.toString()
+                        //role based navigation
+                        if (role == "admin") {
+                            navController.navigate(ROUTE_DASHBOARD)
+                        } else {
+                            navController.navigate(ROUTE_USERDASHBOARD)
+                        }
+                        Toast.makeText(context, "Successfully  login in", Toast.LENGTH_LONG).show()
+                    }
             }else{
                 Toast.makeText(context,it.exception?.message ?:"error logging in", Toast.LENGTH_LONG).show()
 

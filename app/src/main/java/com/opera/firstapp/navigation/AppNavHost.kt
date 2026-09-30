@@ -11,6 +11,7 @@ import com.opera.firstapp.screens.login.LoginScreen
 import com.opera.firstapp.screens.onboardingscreen.OnboardingScreen
 import com.opera.firstapp.screens.register.RegisterScreen
 import com.opera.firstapp.screens.splashscreen.SplashScreen
+import com.opera.firstapp.screens.user.UserDashboard
 
 @Composable
 fun AppNavHost(
@@ -37,6 +38,9 @@ fun AppNavHost(
         }
         composable(ROUTE_ONBOARDING ) {
             OnboardingScreen(navController)
+        }
+        composable(ROUTE_USERDASHBOARD) {
+            UserDashboard(navController)
         }
 
     }
