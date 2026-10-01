@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.opera.firstapp.navigation.ROUTE_ADDPRODUCT
 import com.opera.firstapp.viewModel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -154,7 +155,7 @@ fun DashboardScreen(navController: NavHostController){
                 DashboardCard(
                     title = "Add product",
                     background = Color.Green,
-                    onClick = {}
+                    onClick = {navController.navigate(ROUTE_ADDPRODUCT)}
                 )
                 DashboardCard(
                     title="Profile",
