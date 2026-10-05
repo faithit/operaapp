@@ -58,4 +58,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.10.1")
     //coil
     implementation("io.coil-kt:coil-compose:2.7.0")
+    //cloudinary
+    implementation("com.cloudinary:cloudinary-android:3.1.2")
+    //retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
