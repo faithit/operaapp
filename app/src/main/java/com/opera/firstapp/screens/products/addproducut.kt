@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +44,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.opera.firstapp.R
+import com.opera.firstapp.viewModel.ProductViewModel
 
 //create AddProductScreeen and preview
 //add scaffold-top bar and bottom nav
@@ -127,16 +129,30 @@ fun AddProductScreen(navController: NavHostController){
             OutlinedButton(onClick ={imagePickerLauncher.launch("image/*")}) {
                 Text("Pick an image")
             }
-
-
+            Spacer(modifier= Modifier.height(20.dp))
+            val context=LocalContext.current
+            val myproductviewmodel= ProductViewModel(navController,context)
             Button(
-                onClick = {},
+                onClick = {
+                   myproductviewmodel.addProduct(
+                        name = productName,
+                        price=price,
+                        description = description,
+                        imageUri = imageUri
+                    )
+                    //clear outlined textfields
+                    productName=""
+                    price=""
+                    description=""
+                    imageUri=null
+                          },
                 colors= ButtonDefaults.buttonColors(
-                    containerColor =  Color.Magenta
+                    containerColor =  Color.Magenta,
+                    contentColor = Color.Blue
                 ),
                 modifier= Modifier.fillMaxWidth()
             ) {
-                Text("ADD PRODUCT")
+                Text("ADD PRODUCT", fontSize = 24.sp)
             }
             
         }
