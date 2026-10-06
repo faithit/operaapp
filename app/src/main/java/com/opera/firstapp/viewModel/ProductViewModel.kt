@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.FirebaseDatabaseKtxRegistrar
+import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
 import com.opera.firstapp.network.CloudinaryAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,8 @@ class ProductViewModel(var navController: NavHostController,var context: Context
                     if (it.isSuccessful){
                         Toast.makeText(context,"product added successfully", Toast.LENGTH_LONG).show()
                         //navigate to productlist
+                        navController.navigate(ROUTE_PRODUCTLIST)
+
                     }
                     else{
                         Toast.makeText(context,"Error: ${it.exception?.message}", Toast.LENGTH_LONG).show()

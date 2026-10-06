@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.navigation.ROUTE_ADDPRODUCT
+import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
+import com.opera.firstapp.navigation.ROUTE_USERDASHBOARD
 import com.opera.firstapp.viewModel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -167,11 +169,11 @@ fun DashboardScreen(navController: NavHostController){
                 DashboardCard(
                     title = "Product list",
                     background = Color.Gray,
-                    onClick = {})
+                    onClick = {navController.navigate(ROUTE_PRODUCTLIST)})
                 DashboardCard(
                     title = "userdashboard",
                     background = Color.Magenta,
-                    onClick = {})
+                    onClick = {navController.navigate(ROUTE_USERDASHBOARD)})
             }
 
 
