@@ -103,6 +103,23 @@ class ProductViewModel(var navController: NavHostController,var context: Context
             )
         }
     }
+    //r-READ products from db
+    //fetch all products from realtome database
+    fun allProducts(){
+
+
+    }
+    //u-update
+    //update existing product in firebase
+    fun updateProduct(){
+
+    }
+    //d-delete
+    //delete  product in realtime databse
+    fun deleteProduct(){
+
+    }
+
 
 
 
