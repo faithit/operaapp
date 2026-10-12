@@ -3,15 +3,22 @@ package com.opera.firstapp.viewModel
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.FirebaseDatabaseKtxRegistrar
+import com.google.firebase.database.ValueEventListener
+import com.opera.firstapp.models.Product
 import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
 import com.opera.firstapp.network.CloudinaryAPI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -105,18 +112,65 @@ class ProductViewModel(var navController: NavHostController,var context: Context
     }
     //r-READ products from db
     //fetch all products from realtome database
-    fun allProducts(){
-
+    fun allProducts(products: SnapshotStateList<Product>){
+        databasereference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+               products.clear()
+                for (snap in snapshot.children){
+                    val retrivedProduct=snap.getValue(Product::class.java)
+                    if (retrivedProduct !=null){
+                        products.add(retrivedProduct)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(context,error.message, Toast.LENGTH_SHORT).show()
+            }
+        })
 
     }
+
     //u-update
     //update existing product in firebase
-    fun updateProduct(){
+    fun updateProduct(productId: String, name: String, price: String, description: String, imageUri: Uri?){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val newImageUrl=imageUri?.let{uploadToCloudinary(context,it)}
+                val currentUser= FirebaseAuth.getInstance().currentUser
+                val userId=currentUser?.uid ?: ""
+                val updates= mutableMapOf<String, Any>(
+                    "id" to productId,
+                    "name" to name,
+                    "price" to price,
+                    "description" to description,
+                    "userId" to userId
+                )
+                if (!newImageUrl.isNullOrEmpty()){
+                    updates["imageUrl"]=newImageUrl
+                }
+                databasereference.child(productId).updateChildren(updates).await()
+                withContext(Dispatchers.Main){
+                    Toast.makeText(context,"Product updated successfully", Toast.LENGTH_LONG).show()
+                    navController.navigate(ROUTE_PRODUCTLIST)
+                }
 
+            }catch (e: Exception){
+                withContext(Dispatchers.Main){
+                    Toast.makeText(context,"Update failed:${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
     //d-delete
     //delete  product in realtime databse
-    fun deleteProduct(){
+    fun deleteProduct(productId: String){
+        databasereference.child(productId).removeValue()
+            .addOnSuccessListener {
+            Toast.makeText(context,"product deleted successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(context,"Failed to delete product",Toast.LENGTH_SHORT).show()
+            }
 
     }
 

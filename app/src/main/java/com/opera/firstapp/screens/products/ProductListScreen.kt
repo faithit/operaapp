@@ -28,10 +28,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,9 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.opera.firstapp.R
 import com.opera.firstapp.models.Product
 import com.opera.firstapp.navigation.ROUTE_ADDPRODUCT
+import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
+import com.opera.firstapp.navigation.ROUTE_UPDATEPRODUCT
+import com.opera.firstapp.viewModel.ProductViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,19 +81,18 @@ fun ProductListScreen(navController: NavHostController){
 
     ) {
        innerPadding ->
-         val products=listOf(
-             Product("1","bag","a nice bag","6777",R.drawable.bag.toString()),
-             Product("2","laptop","hp laptop","678888",R.drawable.laptop.toString()) ,
-             Product("3","shoes"," sports shoes","5677",R.drawable.shoes.toString()),
-             Product("4","phone","smartphone","20000",R.drawable.logo.toString()),
-
-         )
+        val products= remember { mutableStateListOf<Product>() }
+        val context=LocalContext.current
+        val myproductviewmodel= ProductViewModel(navController,context)
+        LaunchedEffect(Unit) {
+            myproductviewmodel.allProducts(products)
+        }
         //lazy column
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal=8.dp, vertical =4.dp)
+                .padding(16.dp)
         ) {
             items(products){ item ->
                 // product card
@@ -99,18 +106,17 @@ fun ProductListScreen(navController: NavHostController){
                     ),
                     modifier= Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(bottom=16.dp),
-
+                        .padding(horizontal=8.dp, vertical =4.dp)
               ) {
                     //product image
-                    Image(painter = painterResource(id=item.imageURL.toInt()),
+                    AsyncImage(
+                        model = item.imageUrl,
                         contentDescription = "product image",
-                        contentScale =  ContentScale.Crop,
-                        modifier=Modifier
-                            .height(100.dp)
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(180.dp)
                             .fillMaxWidth()
-                        )
+                    )
                     //column
                     Column(modifier=Modifier.padding(16.dp))
                     {
@@ -133,14 +139,18 @@ fun ProductListScreen(navController: NavHostController){
                         horizontalArrangement =Arrangement.SpaceBetween
 
                     ) {
-                        Button(onClick = {},
+                        Button(onClick = {
+                            myproductviewmodel.deleteProduct(item.id)
+                        },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Red
                             ),
                             modifier = Modifier.weight(1f)) {
                             Text(text="Delete",fontWeight = FontWeight.Bold)
                         }
-                        Button(onClick = {},
+                        Button(onClick = {
+                            navController.navigate("$ROUTE_UPDATEPRODUCT/${item.id}")
+                        },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Green
                             ),

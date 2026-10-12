@@ -11,6 +11,7 @@ import com.opera.firstapp.screens.login.LoginScreen
 import com.opera.firstapp.screens.onboardingscreen.OnboardingScreen
 import com.opera.firstapp.screens.products.AddProductScreen
 import com.opera.firstapp.screens.products.ProductListScreen
+import com.opera.firstapp.screens.products.UpdateProductScreen
 import com.opera.firstapp.screens.register.RegisterScreen
 import com.opera.firstapp.screens.splashscreen.SplashScreen
 import com.opera.firstapp.screens.user.UserDashboard
@@ -49,6 +50,10 @@ fun AppNavHost(
         }
         composable(ROUTE_PRODUCTLIST) {
             ProductListScreen(navController)
+        }
+        composable (ROUTE_UPDATEPRODUCT + "/{productId}"){backStackEntry ->
+            val productId=backStackEntry.arguments?.getString("productId")!!
+            UpdateProductScreen(navController,productId)
         }
 
     }
