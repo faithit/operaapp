@@ -132,7 +132,8 @@ class ProductViewModel(var navController: NavHostController,var context: Context
 
     //u-update
     //update existing product in firebase
-    fun updateProduct(productId: String, name: String, price: String, description: String, imageUri: Uri?){
+    fun updateProduct(productId: String, name: String, price: String,
+                      description: String, imageUri: Uri?){
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val newImageUrl=imageUri?.let{uploadToCloudinary(context,it)}
