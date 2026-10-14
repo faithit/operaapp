@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.screens.dashboard.DashboardScreen
+import com.opera.firstapp.screens.demo.IntentScreen
 import com.opera.firstapp.screens.login.LoginScreen
 import com.opera.firstapp.screens.onboardingscreen.OnboardingScreen
 import com.opera.firstapp.screens.products.AddProductScreen
@@ -54,6 +55,9 @@ fun AppNavHost(
         composable (ROUTE_UPDATEPRODUCT + "/{productId}"){backStackEntry ->
             val productId=backStackEntry.arguments?.getString("productId")!!
             UpdateProductScreen(navController,productId)
+        }
+        composable(ROUTE_MYINTENTS) {
+            IntentScreen(navController)
         }
 
     }

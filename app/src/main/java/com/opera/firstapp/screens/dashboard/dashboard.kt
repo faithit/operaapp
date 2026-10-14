@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.navigation.ROUTE_ADDPRODUCT
+import com.opera.firstapp.navigation.ROUTE_MYINTENTS
 import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
 import com.opera.firstapp.navigation.ROUTE_USERDASHBOARD
 import com.opera.firstapp.viewModel.AuthViewModel
@@ -160,9 +161,9 @@ fun DashboardScreen(navController: NavHostController){
                     onClick = {navController.navigate(ROUTE_ADDPRODUCT)}
                 )
                 DashboardCard(
-                    title="Profile",
+                    title="intents",
                     background = Color.Cyan,
-                    onClick = {}
+                    onClick = {navController.navigate(ROUTE_MYINTENTS)}
                 )
             }
             Row() {
