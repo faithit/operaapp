@@ -54,6 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.opera.firstapp.R
 import com.opera.firstapp.models.Product
+import com.opera.firstapp.navigation.ROUTE_PROFILE
 import com.opera.firstapp.viewModel.AuthViewModel
 import com.opera.firstapp.viewModel.ProductViewModel
 
@@ -106,7 +107,7 @@ fun UserDashboard(navController: NavHostController){
                 )
                 NavigationBarItem(
                     selected = true,
-                    onClick = {},
+                    onClick = {navController.navigate(ROUTE_PROFILE)},
                     icon ={ Icon(
                         Icons.Default.Person,
                         contentDescription = " person icon",

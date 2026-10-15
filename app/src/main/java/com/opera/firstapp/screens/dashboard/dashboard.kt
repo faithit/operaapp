@@ -54,6 +54,7 @@ import androidx.navigation.compose.rememberNavController
 import com.opera.firstapp.navigation.ROUTE_ADDPRODUCT
 import com.opera.firstapp.navigation.ROUTE_MYINTENTS
 import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
+import com.opera.firstapp.navigation.ROUTE_PROFILE
 import com.opera.firstapp.navigation.ROUTE_USERDASHBOARD
 import com.opera.firstapp.viewModel.AuthViewModel
 
@@ -77,7 +78,7 @@ fun DashboardScreen(navController: NavHostController){
                         Icon(Icons.Default.Settings,
                             contentDescription = "icon")
                     }
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {navController.navigate(ROUTE_PROFILE)}) {
                         Icon(Icons.Default.Person,
                             contentDescription = "icon")
                     }
@@ -113,7 +114,7 @@ fun DashboardScreen(navController: NavHostController){
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = {},
+                    onClick = {navController.navigate(ROUTE_PROFILE)},
                     icon = {
                         Icon(Icons.Default.Person,
                             contentDescription = "person icon")
