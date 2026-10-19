@@ -1,6 +1,5 @@
 package com.opera.firstapp.screens.dashboard
 
-import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,16 +10,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,8 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -55,154 +50,158 @@ import com.opera.firstapp.navigation.ROUTE_ADDPRODUCT
 import com.opera.firstapp.navigation.ROUTE_MYINTENTS
 import com.opera.firstapp.navigation.ROUTE_PRODUCTLIST
 import com.opera.firstapp.navigation.ROUTE_PROFILE
+import com.opera.firstapp.navigation.ROUTE_SETTINGS
 import com.opera.firstapp.navigation.ROUTE_USERDASHBOARD
 import com.opera.firstapp.viewModel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavHostController){
-    val context= LocalContext.current
-    val myAuth= AuthViewModel(navController,context)
+fun DashboardScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val myAuth = AuthViewModel(navController, context)
     Scaffold(
-
-        //topbar
         topBar = {
             TopAppBar(
-                title={Text("Dashboard")},
+                title = { Text("Dashboard") },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Cyan,
-                    titleContentColor = Color.Blue
+                    containerColor = Color(0xFF4CAF50),
+                    titleContentColor = Color.White,
                 ),
                 actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.Settings,
-                            contentDescription = "icon")
+                    IconButton(onClick = { navController.navigate(ROUTE_SETTINGS) }) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
                     }
-                    IconButton(onClick = {navController.navigate(ROUTE_PROFILE)}) {
-                        Icon(Icons.Default.Person,
-                            contentDescription = "icon")
+                    IconButton(onClick = { navController.navigate(ROUTE_PROFILE) }) {
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = "Profile"
+                        )
                     }
-                    IconButton(onClick = {myAuth.signout()}) {
-                        Icon(Icons.Default.ExitToApp,
-                            contentDescription = "icon")
+                    IconButton(onClick = { myAuth.signout() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Sign Out"
+                        )
                     }
                 }
             )
         },
-        //bottom bar
         bottomBar = {
             NavigationBar(
-                containerColor = Color.Cyan
+                containerColor = Color(0xFF4CAF50),
+                contentColor = Color.White
             ) {
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
                     icon = {
-                        Icon(Icons.Default.Home,
-                            contentDescription = "home icon")
+                        Icon(
+                            Icons.Default.Home,
+                            contentDescription = "Home"
+                        )
                     },
-                    label={Text("HOME")}
+                    label = { Text("HOME") }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = {},
+                    onClick = { navController.navigate(ROUTE_SETTINGS) },
                     icon = {
-                        Icon(Icons.Default.Settings,
-                            contentDescription = "settings icon")
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
                     },
-                    label={Text("Settings")}
+                    label = { Text("Settings") }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = {navController.navigate(ROUTE_PROFILE)},
+                    onClick = { navController.navigate(ROUTE_PROFILE) },
                     icon = {
-                        Icon(Icons.Default.Person,
-                            contentDescription = "person icon")
+                        Icon(
+                            Icons.Default.Person,
+                            contentDescription = "Profile"
+                        )
                     },
-                    label={Text("Profile")}
+                    label = { Text("Profile") }
                 )
             }
         },
-        //floating action button
         floatingActionButton = {
             FloatingActionButton(onClick = {}) {
-                Icon(Icons.Default.Add,
-                    contentDescription = "add icon")
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Add"
+                )
             }
         }
-
-    )
-
-    {
-       innerpadding ->
-        //column
+    ) { innerpadding ->
         Column(
             modifier = Modifier
                 .padding(innerpadding)
-                .background(color=Color.White)
+                .background(color = Color.White)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-
         ) {
-            var username  by remember { mutableStateOf("loading ..") }
+            var username by remember { mutableStateOf("loading ..") }
             LaunchedEffect(Unit) {
-                myAuth.getCurrentUserName { username=it }
+                myAuth.getCurrentUserName { username = it }
             }
-            Text("welcome $username !",
+            Text(
+                "welcome $username !",
                 fontSize = 28.sp,
-                color=Color.Blue
+                color = Color.Blue
             )
             Spacer(modifier = Modifier.height(16.dp))
-            //row
-            Row() {
+            Row {
                 DashboardCard(
                     title = "Add product",
                     background = Color.Green,
-                    onClick = {navController.navigate(ROUTE_ADDPRODUCT)}
+                    onClick = { navController.navigate(ROUTE_ADDPRODUCT) }
                 )
                 DashboardCard(
-                    title="intents",
+                    title = "intents",
                     background = Color.Cyan,
-                    onClick = {navController.navigate(ROUTE_MYINTENTS)}
+                    onClick = { navController.navigate(ROUTE_MYINTENTS) }
                 )
             }
-            Row() {
+            Row {
                 DashboardCard(
                     title = "Product list",
                     background = Color.Gray,
-                    onClick = {navController.navigate(ROUTE_PRODUCTLIST)})
+                    onClick = { navController.navigate(ROUTE_PRODUCTLIST) }
+                )
                 DashboardCard(
                     title = "userdashboard",
                     background = Color.Magenta,
-                    onClick = {navController.navigate(ROUTE_USERDASHBOARD)})
+                    onClick = { navController.navigate(ROUTE_USERDASHBOARD) }
+                )
             }
-
-
         }
-
-
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun dashboardpreview(){
+fun dashboardpreview() {
     DashboardScreen(rememberNavController())
 }
 
-//dASHBOARD card
 @Composable
 fun DashboardCard(
     title: String,
     background: Color,
-    onClick:()-> Unit)
-{
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .height(150.dp)
             .width(150.dp)
             .padding(8.dp)
-            .clickable{onClick()},
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = background
         ),
@@ -213,16 +212,19 @@ fun DashboardCard(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = title,
+            Text(
+                text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color=Color.Blue)
+                color = Color.Blue
+            )
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
-fun dashboardcardpreview(){
+fun dashboardcardpreview() {
     DashboardCard(
         title = "opera",
         background = Color.Yellow,

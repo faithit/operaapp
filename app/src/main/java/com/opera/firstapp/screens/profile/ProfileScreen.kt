@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ButtonDefaults
@@ -71,11 +71,11 @@ fun ProfileScreen(navController: NavHostController) {
                 title = { Text("Profile") },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = topAppBarColors(
-                    containerColor = Color(0xFF4CAF50),
+                    containerColor = Color.Green,
                     titleContentColor = Color.White
                 )
             )
@@ -151,7 +151,7 @@ fun ProfileScreen(navController: NavHostController) {
                     onClick = {},
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4CAF50),
+                        containerColor = Color.Green,
                         contentColor = Color.White
                     )
                 ) {
@@ -231,6 +231,6 @@ fun ProfileInfoCardPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun profilepreview() {
+fun ProfilePreview() {
     ProfileScreen(rememberNavController())
 }

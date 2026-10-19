@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.opera.firstapp.screens.cart.CartScreen
 import com.opera.firstapp.screens.dashboard.DashboardScreen
 import com.opera.firstapp.screens.demo.IntentScreen
 import com.opera.firstapp.screens.login.LoginScreen
@@ -15,24 +16,25 @@ import com.opera.firstapp.screens.products.ProductListScreen
 import com.opera.firstapp.screens.products.UpdateProductScreen
 import com.opera.firstapp.screens.profile.ProfileScreen
 import com.opera.firstapp.screens.register.RegisterScreen
+import com.opera.firstapp.screens.settings.SettingsScreen
 import com.opera.firstapp.screens.splashscreen.SplashScreen
 import com.opera.firstapp.screens.user.UserDashboard
 
 @Composable
 fun AppNavHost(
-    modifier: Modifier=Modifier,
-    navController: NavHostController= rememberNavController(),
-    startDestination: String=ROUTE_SPLASH
-){
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+    startDestination: String = ROUTE_SPLASH
+) {
     NavHost(
-        navController=navController,
-        modifier=modifier,
+        navController = navController,
+        modifier = modifier,
         startDestination = startDestination
-    ){
+    ) {
         composable(ROUTE_SPLASH) {
             SplashScreen(navController)
         }
-        composable (ROUTE_LOGIN){
+        composable(ROUTE_LOGIN) {
             LoginScreen(navController)
         }
         composable(ROUTE_REGISTER) {
@@ -41,21 +43,21 @@ fun AppNavHost(
         composable(ROUTE_DASHBOARD) {
             DashboardScreen(navController)
         }
-        composable(ROUTE_ONBOARDING ) {
+        composable(ROUTE_ONBOARDING) {
             OnboardingScreen(navController)
         }
         composable(ROUTE_USERDASHBOARD) {
             UserDashboard(navController)
         }
-        composable (ROUTE_ADDPRODUCT){
+        composable(ROUTE_ADDPRODUCT) {
             AddProductScreen(navController)
         }
         composable(ROUTE_PRODUCTLIST) {
             ProductListScreen(navController)
         }
-        composable (ROUTE_UPDATEPRODUCT + "/{productId}"){backStackEntry ->
-            val productId=backStackEntry.arguments?.getString("productId")!!
-            UpdateProductScreen(navController,productId)
+        composable(ROUTE_UPDATEPRODUCT + "/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId")!!
+            UpdateProductScreen(navController, productId)
         }
         composable(ROUTE_MYINTENTS) {
             IntentScreen(navController)
@@ -63,9 +65,11 @@ fun AppNavHost(
         composable(ROUTE_PROFILE) {
             ProfileScreen(navController)
         }
-
+        composable(ROUTE_SETTINGS) {
+            SettingsScreen(navController)
+        }
+        composable(ROUTE_CART) {
+            CartScreen(navController)
+        }
     }
-
-
-
 }
