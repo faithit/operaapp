@@ -11,6 +11,7 @@ import com.opera.firstapp.screens.dashboard.DashboardScreen
 import com.opera.firstapp.screens.demo.IntentScreen
 import com.opera.firstapp.screens.login.LoginScreen
 import com.opera.firstapp.screens.onboardingscreen.OnboardingScreen
+import com.opera.firstapp.screens.orders.OrdersScreen
 import com.opera.firstapp.screens.products.AddProductScreen
 import com.opera.firstapp.screens.products.ProductListScreen
 import com.opera.firstapp.screens.products.UpdateProductScreen
@@ -70,6 +71,9 @@ fun AppNavHost(
         }
         composable(ROUTE_CART) {
             CartScreen(navController)
+        }
+        composable(ROUTE_ORDERS) {
+            OrdersScreen(navController)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.opera.firstapp.viewModel
 
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.opera.firstapp.models.STKPushRequest
@@ -10,6 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
@@ -18,19 +21,32 @@ import java.util.Locale
 
 class MpesaViewModel(private val context: Context) : ViewModel() {
 
-    // Safaricom Daraja Sandbox Credentials
-    private val consumerKey = "cEGA4yFGHf13eI6LpAGXyV8L3Gg3sTG2"
-    private val consumerSecret = "pG8a0H9AAnxNGq3Z"
+    // Safaricom Daraja Credentials
+    private val consumerKey = "hAMFwbRNtEO8iK19tjDb35lL2HmAaUaekv1OKiOJzXRCN5My"
+    private val consumerSecret = "OxBKrhGfGDc48lvbZLqjjq6rPu7bUC8JRGG3Cn5mUIkK6R26FWu1fu1NAdo9lhhD"
     private val shortCode = "174379"
     private val passkey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-    private val callbackUrl = "https://mydomain.com/path"
+    private val callbackUrl = "https://operashop.onrender.com/callback/"
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://sandbox.safaricom.co.ke/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    // Set to true for Sandbox, false for Production
+    var isSandbox = true
 
-    private val mpesaApi = retrofit.create(MpesaAPI::class.java)
+    private fun createMpesaApi(sandbox: Boolean): MpesaAPI {
+        val baseUrl = if (sandbox) "https://sandbox.safaricom.co.ke/" else "https://api.safaricom.co.ke/"
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(MpesaAPI::class.java)
+    }
 
     fun performSTKPush(
         phone: String,
@@ -53,17 +69,37 @@ class MpesaViewModel(private val context: Context) : ViewModel() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // 1. Generate Auth Token
-                val authBytes = "$consumerKey:$consumerSecret".toByteArray()
-                val encodedAuth = Base64.encodeToString(authBytes, Base64.NO_WRAP)
-                val tokenResponse = mpesaApi.getAccessToken("Basic $encodedAuth")
+                val cleanKey = consumerKey.trim()
+                val cleanSecret = consumerSecret.trim()
+                val authBytes = "$cleanKey:$cleanSecret".toByteArray(Charsets.UTF_8)
+                val encodedAuth = Base64.encodeToString(authBytes, Base64.NO_WRAP).trim()
+
+                Log.d("MpesaViewModel", "Requesting token with Basic $encodedAuth")
+
+                var api = createMpesaApi(isSandbox)
+                var tokenResponse = api.getAccessToken("Basic $encodedAuth")
+
+                // If Sandbox returns error (404/401), automatically fallback to Production endpoint in case Production credentials are being used
+                if (!tokenResponse.isSuccessful && isSandbox) {
+                    Log.w("MpesaViewModel", "Sandbox auth failed (${tokenResponse.code()}), trying Production endpoint...")
+                    val prodApi = createMpesaApi(sandbox = false)
+                    val prodResponse = prodApi.getAccessToken("Basic $encodedAuth")
+                    if (prodResponse.isSuccessful && prodResponse.body() != null) {
+                        api = prodApi
+                        tokenResponse = prodResponse
+                        isSandbox = false
+                        Log.d("MpesaViewModel", "Switched to Production endpoint successfully")
+                    }
+                }
 
                 if (!tokenResponse.isSuccessful || tokenResponse.body() == null) {
+                    val errorString = tokenResponse.errorBody()?.string() ?: tokenResponse.message()
+                    Log.e("MpesaViewModel", "Token error (${tokenResponse.code()}): $errorString")
                     withContext(Dispatchers.Main) {
                         onLoading(false)
                         Toast.makeText(
                             context,
-                            "Auth failed: ${tokenResponse.message()}",
+                            "Auth failed (${tokenResponse.code()}): $errorString",
                             Toast.LENGTH_LONG
                         ).show()
                     }
@@ -71,11 +107,12 @@ class MpesaViewModel(private val context: Context) : ViewModel() {
                 }
 
                 val accessToken = tokenResponse.body()!!.accessToken
+                Log.d("MpesaViewModel", "Access token acquired successfully")
 
                 // 2. Generate Timestamp and Password
                 val timestamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(Date())
-                val passwordBytes = "$shortCode$passkey$timestamp".toByteArray()
-                val password = Base64.encodeToString(passwordBytes, Base64.NO_WRAP)
+                val passwordBytes = "$shortCode$passkey$timestamp".toByteArray(Charsets.UTF_8)
+                val password = Base64.encodeToString(passwordBytes, Base64.NO_WRAP).trim()
 
                 val intAmount = amount.toInt().toString()
 
@@ -95,7 +132,7 @@ class MpesaViewModel(private val context: Context) : ViewModel() {
                 )
 
                 // 4. Send STK Push Request
-                val stkResponse = mpesaApi.sendSTKPush("Bearer $accessToken", stkRequest)
+                val stkResponse = api.sendSTKPush("Bearer $accessToken", stkRequest)
 
                 withContext(Dispatchers.Main) {
                     onLoading(false)
@@ -109,11 +146,14 @@ class MpesaViewModel(private val context: Context) : ViewModel() {
                     } else {
                         val errorMsg = stkResponse.body()?.customerMessage
                             ?: stkResponse.body()?.responseDescription
+                            ?: stkResponse.errorBody()?.string()
                             ?: "STK Push request failed"
+                        Log.e("MpesaViewModel", "STK Error: $errorMsg")
                         Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
+                Log.e("MpesaViewModel", "Exception during STK Push", e)
                 withContext(Dispatchers.Main) {
                     onLoading(false)
                     Toast.makeText(

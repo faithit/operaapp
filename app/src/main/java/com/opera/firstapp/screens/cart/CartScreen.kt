@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -64,8 +65,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.opera.firstapp.models.CartItem
+import com.opera.firstapp.navigation.ROUTE_ORDERS
 import com.opera.firstapp.viewModel.CartViewModel
 import com.opera.firstapp.viewModel.MpesaViewModel
+import com.opera.firstapp.viewModel.OrderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +76,7 @@ fun CartScreen(navController: NavHostController) {
     val context = LocalContext.current
     val cartViewModel = remember { CartViewModel(navController, context) }
     val mpesaViewModel = remember { MpesaViewModel(context) }
+    val orderViewModel = remember { OrderViewModel(navController, context) }
     val cartItems = remember { mutableStateListOf<CartItem>() }
 
     var showPaymentDialog by remember { mutableStateOf(false) }
@@ -109,13 +113,18 @@ fun CartScreen(navController: NavHostController) {
         bottomBar = {
             if (cartItems.isNotEmpty()) {
                 Surface(
-                    shadowElevation = 8.dp,
-                    color = Color.White
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .navigationBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    shadowElevation = 10.dp,
+                    color = Color.White,
+                    shape = RoundedCornerShape(20.dp)
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -365,8 +374,16 @@ fun CartScreen(navController: NavHostController) {
                                     isProcessingPayment = isProcessing
                                 },
                                 onSuccess = {
-                                    showPaymentDialog = false
-                                    cartViewModel.clearCart()
+                                    orderViewModel.createOrder(
+                                        cartItems = cartItems,
+                                        totalPrice = totalPrice,
+                                        phoneNumber = phoneNumber,
+                                        onComplete = {
+                                            showPaymentDialog = false
+                                            cartViewModel.clearCart()
+                                            navController.navigate(ROUTE_ORDERS)
+                                        }
+                                    )
                                 }
                             )
                         },

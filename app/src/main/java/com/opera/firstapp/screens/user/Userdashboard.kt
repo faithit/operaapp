@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -61,6 +62,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.opera.firstapp.models.Product
 import com.opera.firstapp.navigation.ROUTE_CART
+import com.opera.firstapp.navigation.ROUTE_ORDERS
 import com.opera.firstapp.navigation.ROUTE_PROFILE
 import com.opera.firstapp.viewModel.AuthViewModel
 import com.opera.firstapp.viewModel.CartViewModel
@@ -103,6 +105,13 @@ fun UserDashboard(navController: NavHostController) {
                     titleContentColor = Color.White
                 ),
                 actions = {
+                    IconButton(onClick = { navController.navigate(ROUTE_ORDERS) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ReceiptLong,
+                            contentDescription = "My Orders",
+                            tint = Color.White
+                        )
+                    }
                     IconButton(onClick = { myauthviewmodel.signout() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,

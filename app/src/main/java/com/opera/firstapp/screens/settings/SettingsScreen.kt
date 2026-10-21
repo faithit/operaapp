@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lock
@@ -55,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.opera.firstapp.navigation.ROUTE_ORDERS
 import com.opera.firstapp.navigation.ROUTE_PROFILE
 import com.opera.firstapp.viewModel.AuthViewModel
 
@@ -109,6 +111,13 @@ fun SettingsScreen(navController: NavHostController) {
                         title = "Profile Information",
                         subtitle = "View and edit your personal details",
                         onClick = { navController.navigate(ROUTE_PROFILE) }
+                    )
+                    HorizontalDivider(color = Color(0xFFEEEEEE))
+                    SettingsItem(
+                        icon = Icons.AutoMirrored.Filled.ReceiptLong,
+                        title = "My Orders",
+                        subtitle = "Track and view your order history",
+                        onClick = { navController.navigate(ROUTE_ORDERS) }
                     )
                     HorizontalDivider(color = Color(0xFFEEEEEE))
                     SettingsItem(
